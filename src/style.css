@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+html, body, #app { background:#000; color:#fff; min-height:100vh; }
+body { font-family: system-ui, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+
+/* Scrollbar minimal */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+/* Neon note helpers (use on note elements) */
+:root{
+	--neon-pink: #ff2d95;
+	--neon-indigo: #6a00ff;
+	--neon-cyan: #00d4ff;
+	--neon-green: #00ff8a;
+	--neon-yellow: #ffd300;
+}
+
+.note-neon { font-weight:600; }
+.note-neon.pink { color: var(--neon-pink); text-shadow: 0 0 8px rgba(255,45,149,0.18); }
+.note-neon.indigo { color: var(--neon-indigo); text-shadow: 0 0 10px rgba(106,0,255,0.16); }
+.note-neon.cyan { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(0,212,255,0.14); }
+.note-neon.green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0,255,138,0.12); }
+.note-neon.yellow { color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255,211,0,0.12); }
+
+/* Zoom helpers used by components */
+.scale-target { transition: transform 220ms ease; transform-origin: center; }
+.zoom-large { transform: scale(1.08); }
+.zoom-small { transform: scale(0.98); }
+
