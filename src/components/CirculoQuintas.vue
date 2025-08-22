@@ -42,7 +42,7 @@ const paths = computed(() => flechas.value.map((f,i) => ({
 
 // refs para animación stroke
 const pathEls = ref<SVGPathElement[]>([])
-function setPathEl(el: SVGPathElement | null, idx: number) { if(el) pathEls.value[idx] = el }
+function setPathEl(el: any, idx: number) { const node = el as SVGPathElement | null; if(node) pathEls.value[idx] = node }
 
 // center pulse ref
 const centerRef = ref<SVGCircleElement | null>(null)
