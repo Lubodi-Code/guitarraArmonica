@@ -68,7 +68,7 @@ watch(() => nota.value, async () => {
   infoKey.value++
   await nextTick()
   // animar líneas
-  pathEls.value.forEach(p => {
+  pathEls.value.forEach((p) => {
     const len = p.getTotalLength()
     p.style.strokeDasharray = String(len)
     p.style.strokeDashoffset = String(len)
@@ -77,6 +77,20 @@ watch(() => nota.value, async () => {
     requestAnimationFrame(() => { p.style.strokeDashoffset = '0' })
   })
   pulseCenter()
+  // luego activar flujo continuo
+  setTimeout(() => {
+    pathEls.value.forEach((p, idx) => {
+      p.classList.remove('drawing')
+      p.style.strokeDasharray = ''
+      p.style.strokeDashoffset = ''
+      // aplicar flujo solo en líneas relacionadas a la nota activa
+      if (paths.value[idx]?.active) {
+        p.classList.add('flow')
+      } else {
+        p.classList.remove('flow')
+      }
+    })
+  }, 720)
 })
 
 function offsetPoint(a: Punto, b: Punto, dist: number) {
@@ -137,6 +151,8 @@ function onClickNota(n: string) { spawnRipple(n); setNota(n as any) }
               <line :x1="center.x" :y1="center.y" :x2="p.x" :y2="p.y" class="stroke-neutral-800" stroke-width="1" />
               <g>
                 <circle :cx="p.x" :cy="p.y" :r="nodeR" :fill="nota===p.nota? 'white' : 'black'" :stroke="nota===p.nota? '#fff' : `hsl(${p.hue} 100% 60%)`" :stroke-width="nota===p.nota? 3:2" :class="nota===p.nota? 'activeNode':''" />
+                <!-- Anillo fijo para seleccionado (no mueve el nodo) -->
+                <circle v-if="nota===p.nota" :cx="p.x" :cy="p.y" :r="nodeR+6" class="activeRing" :style="{ filter: `drop-shadow(0 0 8px hsl(${p.hue} 100% 65% / .7))` }" fill="none" />
                 <circle :cx="p.x" :cy="p.y" :r="nodeR" :style="{ filter: `drop-shadow(0 0 6px hsl(${p.hue} 100% 55% / 0.9))` }" fill="transparent" />
                 <text :x="p.x" :y="p.y+4" font-size="12" font-weight="700" text-anchor="middle" :fill="nota===p.nota? 'black':'white'">{{ p.nota }}</text>
                 <text v-if="gradosMap[p.nota]" :x="p.x" :y="p.y+30" font-size="9" text-anchor="middle" :fill="functionColors[gradosMap[p.nota]] || '#888'" class="tracking-tight">{{ gradosMap[p.nota] }}</text>
@@ -204,8 +220,13 @@ function onClickNota(n: string) { spawnRipple(n); setNota(n as any) }
 text { font-family: system-ui, Helvetica, Arial, sans-serif; }
 
 circle { transition: transform 160ms ease, opacity 140ms ease, fill 320ms ease, stroke 320ms ease; }
-.activeNode { transform-origin: center; transform: scale(1.1); }
+/* Mantener el seleccionado totalmente fijo */
+.activeNode { transform: none; }
 g[role="button"] circle:not(.activeNode):hover { transform: scale(1.07); }
+
+/* Anillo de "respiración" para el seleccionado */
+.activeRing { stroke: #fff; stroke-width: 2; stroke-dasharray: 6 8; animation: ring 1600ms ease-in-out infinite; }
+@keyframes ring { 0% { stroke-opacity:.35; stroke-dashoffset: 0; } 50% { stroke-opacity:.85; } 100% { stroke-opacity:.35; stroke-dashoffset: -60; } }
 
 .responsive-svg { display:block; width: 420px; height: 420px; max-width: 100%; overflow: visible; }
 .relative { overflow: visible; }
@@ -213,7 +234,10 @@ g[role="button"] circle:not(.activeNode):hover { transform: scale(1.07); }
 /* Líneas con dibujo progresivo */
 .harm-line { opacity:.85; stroke-linecap:round; stroke-linejoin:round; }
 .harm-line.drawing { transition: stroke-dashoffset 650ms cubic-bezier(.25,.9,.3,1); }
-.harm-line.highlight { filter: drop-shadow(0 0 4px rgba(255,255,255,.55)); }
+.harm-line.highlight { filter: drop-shadow(0 0 6px rgba(255,255,255,.6)); stroke-width:1.8; }
+/* flujo direccional sutil */
+.harm-line.flow { stroke-dasharray: 8 12; animation: flow 9s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -280; } }
 
 /* Centro pulse */
 .center-circle { transform-origin:center; }

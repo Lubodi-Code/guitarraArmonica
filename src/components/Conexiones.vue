@@ -17,3 +17,9 @@ const { nota } = useNotaSeleccionada()
     <p class="text-xs mt-3 text-neutral-500">Basado en la tonalidad de <strong>{{ nota }}</strong> mayor.</p>
   </div>
 </template>
+
+<!--
+  Por pedido del usuario, se mantiene exactamente la forma original.
+  Si se desean animaciones sin cambiar la UI, se pueden añadir
+  transiciones muy sutiles a li/span aquí, pero por ahora se omite.
+-->
